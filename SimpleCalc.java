@@ -1,12 +1,8 @@
 //John Ference
 /*
- * Modifying a calculator program created in CS401
- *
- * Added functionality will include:
- *
- *
  * To Do:
- * Add the ability to not modify the text in the main area. Make sure the equals is in the right spot
+ * Modulo capability
+ * Add in exponents
  */
 
 import java.awt.*;
@@ -210,7 +206,6 @@ public class SimpleCalc
 			//Evaluate individuals that can be easily evaluated
 			//Take out the parentheses and recruse through the evaluation func
 			//
-			System.out.println("The token" + token);
 			if("+-*/%^".contains(token))
 					operators.add(token);
 			else{
@@ -218,22 +213,17 @@ public class SimpleCalc
 				quickEvaluation(token);
 			}
 		}
-		System.out.println(operands);
-		System.out.println(finalOperands);
-		System.out.println("-----");
 		newParens();
 		basicEval(0,operands.size()-1);
 		String finalRes = operands.get(0).toString();
 		if(operators.size() == 0 || operands.size() == 1)
 				result.setText(finalRes);
 		else
-				result.setText("Bogus");
+				result.setText("Ensure equation typed in correctly");
 	
 	}
-	//Work
-	//Need to include handling for operations within parentheses.Recursion?
+
 	public void basicEval(int start, int end){
-		System.out.println("start: " + start + " ends "+end);
 		double result=0;
 		for(int i=start; i<end; i++){
 			if(operators.get(i).equals("*")){
@@ -282,8 +272,6 @@ public class SimpleCalc
 				end--;
 			}
 		}
-	System.out.println("After going through evaluation "+ finalOperands);		
-	System.out.println("The operands " +operands);
 	}
 
 
@@ -303,8 +291,6 @@ public class SimpleCalc
 				end=-1;
 			}
 		}
-		System.out.println("Final " + finalOperands);
-		System.out.println("Normal " + operands);
 	}
 
 	public void quickEvaluation(String token){
@@ -313,7 +299,6 @@ public class SimpleCalc
 		for(i=0;i<quick.length; i++){
 			if(token.startsWith(quick[i])){
 				num=Double.parseDouble(token.substring(4,token.length()-1));
-				System.out.println(num);
 			}
 		}
 				if(i==0)
@@ -324,7 +309,6 @@ public class SimpleCalc
 					finalOperands.add(Math.tan(num));
 				else{
 					token = token.replaceAll("[()]","");
-					System.out.println("The new token "+token);
 					try{
 						finalOperands.add(Double.parseDouble(token));//Fill finalOperands to be the same size
 					}
