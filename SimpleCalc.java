@@ -45,6 +45,7 @@ public class SimpleCalc
 	ArrayList<String> operators;
 	ArrayList<String> operands;
 	ArrayList<Double> finalOperands;
+	String[] quick= {"sin","cos","tan"};
 	public SimpleCalc()
 	{
 		//Setting up the frame
@@ -124,7 +125,7 @@ public class SimpleCalc
 		cos.addActionListener(listener);
 		
 		sin = new JButton();
-		sin.setText("sin)");
+		sin.setText("sin");
 		sin.addActionListener(listener);
 
 		tan = new JButton();
@@ -205,31 +206,29 @@ public class SimpleCalc
 		while(st.hasMoreTokens()){
 			String token = st.nextToken();
 
+			//[sin(0),(,5,6,),10]
+			//Evaluate individuals that can be easily evaluated
+			//Take out the parentheses and recruse through the evaluation func
+			//
+			System.out.println("The token" + token);
 			if("+-*/%^".contains(token))
 					operators.add(token);
 			else{
 				operands.add(token);
-				try{
-					finalOperands.add(Double.parseDouble(token));//Fill finalOperands to be the same size
-				}
-				catch(NumberFormatException e){
-					finalOperands.add(1.0);
-				}
+				quickEvaluation(token);
 			}
 		}
-		evaluateIndividuals();
-		System.out.println(finalOperands);
-		evaluateParens();
-		System.out.println(operators);
 		System.out.println(operands);
 		System.out.println(finalOperands);
-		/*
+		System.out.println("-----");
+		newParens();
+		basicEval(0,operands.size()-1);
 		String finalRes = operands.get(0).toString();
 		if(operators.size() == 0 || operands.size() == 1)
 				result.setText(finalRes);
 		else
 				result.setText("Bogus");
-	*/
+	
 	}
 	//Work
 	//Need to include handling for operations within parentheses.Recursion?
@@ -259,64 +258,84 @@ public class SimpleCalc
 				end--;
 			}
 		}
-	System.out.println(finalOperands);		
+
+		for(int i=start; i<end; i++){
+			if(operators.get(i).equals("+")){
+				result=finalOperands.get(i) + finalOperands.get(i+1);
+				finalOperands.set(i,result);
+				operands.set(i,Double.toString(result));
+				operators.remove(i);
+				finalOperands.remove(i+1);
+				operands.remove(i+1);
+				i--;
+				end--;
+			}
+		
+			else if(operators.get(i).equals("-")){
+				result=finalOperands.get(i) - finalOperands.get(i+1);
+				finalOperands.set(i,result);
+				operands.set(i,Double.toString(result));
+				operators.remove(i);
+				finalOperands.remove(i+1);
+				operands.remove(i+1);
+				i--;
+				end--;
+			}
+		}
+	System.out.println("After going through evaluation "+ finalOperands);		
+	System.out.println("The operands " +operands);
 	}
 
-	public void evaluateParens(){
-		int start=0;
-		int end=0;
+
+	public void newParens(){
+		int start=-1;
+		int end=-1;
+
 		for(int i=0; i<operands.size(); i++){
 			if(operands.get(i).startsWith("("))
 				start=i;
+			//May want to make this an else if
 			if(operands.get(i).endsWith(")"))
 				end=i;
-			if(end != 0){
+			if(start != -1 && end != -1){
 				basicEval(start,end);
-				start=0;
-				end=0;
+				start=-1;
+				end=-1;
 			}
 		}
+		System.out.println("Final " + finalOperands);
+		System.out.println("Normal " + operands);
 	}
 
-	public void evaluateIndividuals(){
+	public void quickEvaluation(String token){
 		double num=0;
-		String def="";
-		for(int i=0; i<operands.size(); i++){
-			if(operands.get(i).startsWith("cos")){
-				def = operands.get(i);
-				num=Double.parseDouble(def.substring(4,def.length()-1));
-				num=Math.cos(num);
-				finalOperands.set(i,num);
-			}
-
-			else if(operands.get(i).startsWith("sin")){
-				def=operands.get(i);
-				num=Double.parseDouble(def.substring(4,def.length()-1));
-				num = Math.sin(num);
-				finalOperands.set(i,num);
-			}
-
-			else if(operands.get(i).startsWith("tan")){
-				def=operands.get(i);
-				num=Double.parseDouble(def.substring(4,def.length()-1));
-				num=Math.tan(num);
-				finalOperands.set(i,num);
-			}
-
-			else if(operands.get(i).startsWith("(")){
-				def=operands.get(i);
-				num=Double.parseDouble(def.substring(1,def.length()));
-				finalOperands.set(i,num);
-			}
-
-			else if(operands.get(i).startsWith(")")){
-				def=operands.get(i);
-				num=Double.parseDouble(def.substring(0,def.length()+1));
-				finalOperands.set(i,num);
+		int i;
+		for(i=0;i<quick.length; i++){
+			if(token.startsWith(quick[i])){
+				num=Double.parseDouble(token.substring(4,token.length()-1));
+				System.out.println(num);
 			}
 		}
+				if(i==0)
+					finalOperands.add(Math.sin(num));
+				else if(i==1)
+					finalOperands.add(Math.cos(num));
+				else if(i==2)
+					finalOperands.add(Math.tan(num));
+				else{
+					token = token.replaceAll("[()]","");
+					System.out.println("The new token "+token);
+					try{
+						finalOperands.add(Double.parseDouble(token));//Fill finalOperands to be the same size
+					}
+					catch(NumberFormatException e){
+						finalOperands.add(1.0);
+					}
+					
+				}
+			
+			
 	}
-
 
 	public static void main(String [] args)
 	{
