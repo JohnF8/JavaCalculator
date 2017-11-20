@@ -34,14 +34,14 @@ public class SimpleCalc
 	JButton cos;
 	JButton sin;
 	JButton tan;
-	JButton clear;
+	JButton negative;
 	JButton enter;
 
 
 	ArrayList<String> operators;
 	ArrayList<String> operands;
 	ArrayList<Double> finalOperands;
-	String[] quick= {"sin","cos","tan","e","ln","log","sqrt"};
+	String[] quick= {"sin","cos","tan","e","ln","log","sqrt","_"};
 	public SimpleCalc()
 	{
 		//Setting up the frame
@@ -128,9 +128,9 @@ public class SimpleCalc
 		tan.setText("tan");
 		tan.addActionListener(listener);
 		
-		clear = new JButton();
-		clear.setText("CE");
-		clear.addActionListener(listener);
+		negative = new JButton();
+		negative.setText("Negative");
+		negative.addActionListener(listener);
 
 		enter = new JButton();
 		enter.setText("enter");
@@ -154,7 +154,7 @@ public class SimpleCalc
 		
 		bottomPanel.add(sin);
 		bottomPanel.add(tan);
-		bottomPanel.add(clear);
+		bottomPanel.add(negative);
 		bottomPanel.add(enter);
 		
 		content.add(topPanel);
@@ -181,9 +181,9 @@ public class SimpleCalc
 				expression.setText(expression.getText()+ "tan( ");
 			}
 
-			if(whichButton == clear){
-				expression.setText("");
-			}
+			if(whichButton == negative)
+				expression.setText(expression.getText()+ "_");
+
 
 			if(whichButton == enter){
 				evaluate();	
@@ -202,16 +202,14 @@ public class SimpleCalc
 		while(st.hasMoreTokens()){
 			String token = st.nextToken();
 
-			//[sin(0),(,5,6,),10]
-			//Evaluate individuals that can be easily evaluated
-			//Take out the parentheses and recruse through the evaluation func
-			//
-			if("+-*/%^".contains(token))
+			if("+-*/^".contains(token))
 					operators.add(token);
 			else{
 				operands.add(token);
 				quickEvaluation(token);
 			}
+
+
 		}
 		System.out.println("The operands "+operands);
 		System.out.println("The final operands " +finalOperands);
@@ -221,7 +219,7 @@ public class SimpleCalc
 		if(operators.size() == 0 || operands.size() == 1)
 				result.setText(finalRes);
 		else
-				result.setText("Ensure equation typed in correctly");
+				result.setText("Incorrect input, try again");
 	
 	}
 
@@ -318,6 +316,12 @@ public class SimpleCalc
 					num=Double.parseDouble(token.substring(3,token.length()-1));
 				else if(i==6)
 					num=Double.parseDouble(token.substring(5,token.length()-1));
+				else if(i==7){
+					token = token.replaceAll("[()]","");
+					System.out.println("The token is "+token);
+					num=(Double.parseDouble(token.substring(1,token.length())))*-1.0;
+					System.out.println("The num "+num);
+				}
 				break;
 			}
 		}
@@ -338,6 +342,8 @@ public class SimpleCalc
 					finalOperands.add(Math.log10(num));
 				else if(i==6)
 					finalOperands.add(Math.sqrt(num));
+				else if(i==7)
+					finalOperands.add(num);
 				else{
 					token = token.replaceAll("[()]","");
 					try{
