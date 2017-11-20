@@ -41,7 +41,7 @@ public class SimpleCalc
 	ArrayList<String> operators;
 	ArrayList<String> operands;
 	ArrayList<Double> finalOperands;
-	String[] quick= {"sin","cos","tan"};
+	String[] quick= {"sin","cos","tan","e","ln","log","sqrt"};
 	public SimpleCalc()
 	{
 		//Setting up the frame
@@ -213,9 +213,11 @@ public class SimpleCalc
 				quickEvaluation(token);
 			}
 		}
+		System.out.println("The operands "+operands);
+		System.out.println("The final operands " +finalOperands);
 		newParens();
 		basicEval(0,operands.size()-1);
-		String finalRes = operands.get(0).toString();
+		String finalRes = finalOperands.get(0).toString();
 		if(operators.size() == 0 || operands.size() == 1)
 				result.setText(finalRes);
 		else
@@ -225,6 +227,18 @@ public class SimpleCalc
 
 	public void basicEval(int start, int end){
 		double result=0;
+		for(int i=start; i<end; i++){
+			if(operators.get(i).equals("^")){
+				result=Math.pow(finalOperands.get(i), finalOperands.get(i+1));
+				finalOperands.set(i,result);
+				operands.set(i, Double.toString(result));
+				operators.remove(i);
+				finalOperands.remove(i+1);
+				operands.remove(i+1);
+				i--;
+				end--;
+			}
+		}
 		for(int i=start; i<end; i++){
 			if(operators.get(i).equals("*")){
 				result=finalOperands.get(i) * finalOperands.get(i+1);
@@ -297,28 +311,44 @@ public class SimpleCalc
 		double num=0;
 		int i;
 		for(i=0;i<quick.length; i++){
-			if(token.startsWith(quick[i])){
-				num=Double.parseDouble(token.substring(4,token.length()-1));
+			if(token.contains(quick[i])){
+				if(i==0||i==1||i==2||i==5)
+					num=Double.parseDouble(token.substring(4,token.length()-1));
+				else if(i==4)
+					num=Double.parseDouble(token.substring(3,token.length()-1));
+				else if(i==6)
+					num=Double.parseDouble(token.substring(5,token.length()-1));
+				break;
 			}
 		}
+				int index=0;
+				double pre;
+				double post;
 				if(i==0)
 					finalOperands.add(Math.sin(num));
 				else if(i==1)
 					finalOperands.add(Math.cos(num));
 				else if(i==2)
 					finalOperands.add(Math.tan(num));
+				else if(i==3)
+					finalOperands.add(2.71828182846);	
+				else if(i==4)
+					finalOperands.add(Math.log(num));
+				else if(i==5)
+					finalOperands.add(Math.log10(num));
+				else if(i==6)
+					finalOperands.add(Math.sqrt(num));
 				else{
 					token = token.replaceAll("[()]","");
 					try{
 						finalOperands.add(Double.parseDouble(token));//Fill finalOperands to be the same size
 					}
 					catch(NumberFormatException e){
+						System.out.println("Added the 1");
 						finalOperands.add(1.0);
 					}
 					
 				}
-			
-			
 	}
 
 	public static void main(String [] args)
