@@ -125,7 +125,7 @@ public class SimpleCalc
 		tan.addActionListener(listener);
 		
 		negative = new JButton();
-		negative.setText("Negative");
+		negative.setText("Neg");
 		negative.addActionListener(listener);
 
 		enter = new JButton();
