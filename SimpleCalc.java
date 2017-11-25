@@ -1,9 +1,5 @@
-//John Ference
-/*
- * To Do:
- * Modulo capability
- * Add in exponents
- */
+//Java GUI Calculator
+//Sin,cos,tan are outputted in radians
 
 import java.awt.*;
 import java.awt.event.*;
@@ -37,15 +33,15 @@ public class SimpleCalc
 	JButton negative;
 	JButton enter;
 
-
 	ArrayList<String> operators;
 	ArrayList<String> operands;
 	ArrayList<Double> finalOperands;
 	String[] quick= {"sin","cos","tan","e","ln","log","sqrt","_"};
+
 	public SimpleCalc()
 	{
 		//Setting up the frame
-		window = new JFrame( "Simple Calc");
+		window = new JFrame( "Advanced calculator");
 		content = window.getContentPane();
 
 		//Two windows are within content
@@ -135,7 +131,8 @@ public class SimpleCalc
 		enter = new JButton();
 		enter.setText("enter");
 		enter.addActionListener(listener);
-		
+		window.getRootPane().setDefaultButton(enter);//Ability to click enter on keyboard
+
 		bottomPanel.add(add);
 		bottomPanel.add(subtract);
 		bottomPanel.add(multiply);
@@ -159,7 +156,7 @@ public class SimpleCalc
 		
 		content.add(topPanel);
 		content.add(bottomPanel);
-		window.setSize( 640,480);
+		window.setSize( 360,480);
 		window.setVisible( true );
 	}
 
@@ -211,8 +208,6 @@ public class SimpleCalc
 
 
 		}
-		System.out.println("The operands "+operands);
-		System.out.println("The final operands " +finalOperands);
 		newParens();
 		basicEval(0,operands.size()-1);
 		String finalRes = finalOperands.get(0).toString();
